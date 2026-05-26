@@ -22,13 +22,17 @@ const dotenv = require("dotenv");
 dotenv.config();
 
 const PORT = Number(
-  process.env.SOCKET_SERVER_PORT ||
+  process.env.PORT ||
+    process.env.SOCKET_SERVER_PORT ||
     process.env.SOCKET_PORT ||
-    process.env.PORT ||
     3001,
 );
 
-const CORS_ORIGIN = process.env.SOCKET_CORS_ORIGIN || "*";
+const CORS_ORIGIN = (() => {
+  const rawOrigin = process.env.SOCKET_CORS_ORIGIN || "*";
+  if (rawOrigin === "*") return rawOrigin;
+  return rawOrigin.replace(/\/$/, "");
+})();
 const HEARTBEAT_MS = Number(process.env.SOCKET_HEARTBEAT_MS || 30000);
 
 const onlineUsers = new Map();
